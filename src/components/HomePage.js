@@ -8,9 +8,6 @@ import i5 from './thumbnails/celebrity.png'
 import i6 from './thumbnails/science.jpg'
 
 export default function HomePage() {
-
-
-
   let list = [
     {
       title: "sports",

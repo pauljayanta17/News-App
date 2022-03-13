@@ -1,23 +1,17 @@
 import "./App.css";
 import NavBar from "./components/NavBar";
-import React, { Component } from "react";
 import News from "./components/News";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import AboutUs from "./components/AboutUs";
-export default class App extends Component {
-  apiKey = process.env.REACT_APP_NEWSAPP_APIKEY;
-  constructor() {
-    super();
-    this.state = {
-      weather: [],
-    };
-  }
-  async componentDidMount() {}
-  render() {
+import React from 'react';
+
+function App(){
+  const apiKey = process.env.REACT_APP_NEWSAPP_APIKEY;
+  
     return (
       <Router>
-        <NavBar />
+        <NavBar/>
         <div className="App">
           <Switch>
             <Route exact path="/">
@@ -28,7 +22,7 @@ export default class App extends Component {
                 key="politics"
                 category="politics"
                 heading="Let's see the politics"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
 
               />
             </Route>
@@ -37,7 +31,7 @@ export default class App extends Component {
                 key="space"
                 category="space"
                 heading="What is happening in the space ?"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
               />
             </Route>
             <Route exact path="/business">
@@ -45,7 +39,7 @@ export default class App extends Component {
                 key="business"
                 category="business"
                 heading="News about business"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
               />
             </Route>
             <Route exact path="/sports">
@@ -53,7 +47,7 @@ export default class App extends Component {
                 key="sports"
                 category="sports"
                 heading="Sports is here for you"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
               />
             </Route>
             <Route exact path="/astrology">
@@ -61,7 +55,7 @@ export default class App extends Component {
                 key="astrology"
                 category="astrology"
                 heading="News about astrology"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
               />
             </Route>
             <Route exact path="/celebrity">
@@ -69,7 +63,7 @@ export default class App extends Component {
                 key="celebrity"
                 category="celebrity"
                 heading="Worlds Celebrities"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
               />
             </Route>
             <Route exact path="/science">
@@ -77,7 +71,7 @@ export default class App extends Component {
                 key="science"
                 category="science"
                 heading="Science related news"
-                apiKey={this.apiKey}
+                apiKey={apiKey}
               />
             </Route>
             <Route exact path="/about">
@@ -88,5 +82,7 @@ export default class App extends Component {
         </div>
       </Router>
     );
-  }
+  
 }
+
+export default App;

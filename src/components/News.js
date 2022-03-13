@@ -1,119 +1,93 @@
-import React, { Component } from "react";
+import React,{useEffect,useState} from "react";
 import NewsItems from "./NewsItems";
 import "../App.css";
 import Spinner from "./Spinner";
-export default class News extends Component {
-  static defaultProps = {
-    category: "general",
-    heading: "What is going on today ?",
-  };
+function News (props){
 
-  constructor() {
-    super();
-    this.state = {
-      articles: [],
-      loading: false,
-      page: 1,
-      pageSize: 15,
-      totalPages: null,
-      rem: 0,
-    };
-  }
+  const [articles, setarticles] = useState([]);
+  const [loading, setloading] = useState(false);
+  const [page, setpage] = useState(1);
+  const pageSize=15
+  const [totalPages, settotalPages] = useState(0);
+ 
+  useEffect(() => {
+    updateNews()
+  },[]);
 
-  async componentDidMount() {
-    this.setState({
-      loading: true,
-    });
+
+  const updateNews=async()=>{
+    setloading(true)
     let data = await fetch(
-      `https://free-news.p.rapidapi.com/v1/search?q=${this.props.category}&lang=en&page=${this.props.page}&page_size=${this.state.pageSize}`,
+      `https://free-news.p.rapidapi.com/v1/search?q=${props.category}&lang=en&page=${props.page}&page_size=${pageSize}`,
       {
         method: "GET",
         headers: {
           "x-rapidapi-host": "free-news.p.rapidapi.com",
-          "x-rapidapi-key": `${this.props.apiKey}`,
+          "x-rapidapi-key": `${props.apiKey}`,
         },
       }
     );
     let parsedData = await data.json();
-    this.setState({
-      articles: parsedData.articles,
-      totalPages: parseInt(parsedData.total_pages / this.state.pageSize),
-      rem: parsedData.total_pages % this.state.pageSize,
-      loading: false,
-    });
+    setarticles(parsedData.articles)
+    var t = parseInt(parsedData.total_pages / pageSize)
+    settotalPages(t)
+    setloading(false)
   }
-
-  handlePrevious = () => {
-    if (this.state.page !== 1) {
-      this.setState(
+  
+ const handlePrevious = async() => {
+    if (page !== 1) {
+      setpage(page-1)
+      setloading(true)
+      let data = await fetch(
+        `https://free-news.p.rapidapi.com/v1/search?q=${props.category}&lang=en&page=${page}&page_size=${pageSize}`,
         {
-          page: this.state.page - 1,
-          loading: true,
-        },
-        async () => {
-          let data = await fetch(
-            `https://free-news.p.rapidapi.com/v1/search?q=${this.props.category}&lang=en&page=${this.state.page}&page_size=${this.state.pageSize}`,
-            {
-              method: "GET",
-              headers: {
-                "x-rapidapi-host": "free-news.p.rapidapi.com",
-                "x-rapidapi-key": `${this.props.apiKey}`,
-              },
-            }
-          );
-          let parsedData = await data.json();
-          this.setState({
-            articles: parsedData.articles,
-            loading: false,
-          });
-          // console.log(this.state.page);
+          method: "GET",
+          headers: {
+            "x-rapidapi-host": "free-news.p.rapidapi.com",
+            "x-rapidapi-key": `${props.apiKey}`,
+          },
         }
       );
+      let parsedData = await data.json();
+      setarticles(parsedData.articles)
+      setloading(false)
     }
   };
 
-  handleNext = () => {
-    if (this.state.totalPages >= this.state.page) {
-      this.setState(
+ const handleNext = async() => {
+    if (totalPages >= page) {
+      setpage(page+1)
+      setloading(true)
+      let data = await fetch(
+        `https://free-news.p.rapidapi.com/v1/search?q=${props.category}&lang=en&page=${page}&page_size=${pageSize}`,
         {
-          page: this.state.page + 1,
-          loading: true,
-        },
-        async () => {
-          let data = await fetch(
-            `https://free-news.p.rapidapi.com/v1/search?q=${this.props.category}&lang=en&page=${this.state.page}&page_size=${this.state.pageSize}`,
-            {
-              method: "GET",
-              headers: {
-                "x-rapidapi-host": "free-news.p.rapidapi.com",
-                "x-rapidapi-key": `${this.props.apiKey}`,
-              },
-            }
-          );
-          let parsedData = await data.json();
-          this.setState({
-            articles: parsedData.articles,
-            loading: false,
-          });
+          method: "GET",
+          headers: {
+            "x-rapidapi-host": "free-news.p.rapidapi.com",
+            "x-rapidapi-key": `${props.apiKey}`,
+          },
         }
       );
+      let parsedData = await data.json();
+      setarticles(parsedData.articles)
+      setloading(false)
     }
   };
 
-  render() {
+
     return (
       <div className="container mx-3 my-3">
         <h3 style={{ color: "indigo" }}>
-          <span style={{ color: "green", paddingLeft: ".5em" }}>
-            {this.props.heading.charAt(0).toUpperCase() +
-              this.props.heading.slice(1)}
+          <span style={{ color: "white", paddingLeft: ".5em" }}>
+            {props.heading.charAt(0).toUpperCase() +
+              props.heading.slice(1)}
           </span>
         </h3>
         <div className="row">
-          {this.state.loading ? (
+          {loading ? (
             <Spinner />
           ) : (
-            this.state.articles.map((res) => {
+            articles.map((res) => {
               return (
                 <div className="col-md-4" key={res._id}>
                   <NewsItems
@@ -130,20 +104,20 @@ export default class News extends Component {
               );
             })
           )}
-          {!this.state.loading && (
+          {!loading && (
             <div className="d-flex justify-content-between my-3">
               <button
-                disabled={this.state.page <= 1}
+                disabled={page <= 1}
                 type="button"
                 className="btn btn-primary"
-                onClick={this.handlePrevious}
+                onClick={handlePrevious}
               >
                 Previous
               </button>
               <button
                 type="button"
                 className="btn btn-success"
-                onClick={this.handleNext}
+                onClick={handleNext}
               >
                 Next
               </button>
@@ -152,5 +126,8 @@ export default class News extends Component {
         </div>
       </div>
     );
-  }
+  
 }
+
+
+export default News
